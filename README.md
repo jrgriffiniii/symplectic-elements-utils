@@ -9,11 +9,26 @@ $ bundle install
 
 ## Usage
 
-### CSV / REST Request Commands
+### CSV / XML Processing
 **This transforms CSV data sets into XML REST requests**
 
 ```bash
 $ bundle exec thor elements:csv:transform --xml-export=XML_EXPORT --csv-import=CSV_IMPORT
+```
+
+### Elements API
+
+#### User Feeds
+
+```bash
+$ bundle exec thor elements:user_feeds:create \
+  --host=HOST \
+  --port=PORT \
+  --endpoint=ENDPOINT \
+  --password=PASSWORD \
+  --username=USERNAME \
+  --id=ID \
+  --xml-request=XML_REQUEST
 ```
 
 ## Development
