@@ -15,3 +15,11 @@ $ bundle install
 ```bash
 $ bundle exec thor elements:csv:transform --xml-export=XML_EXPORT --csv-import=CSV_IMPORT
 ```
+
+## Development
+
+### Run the test suites
+
+```bash
+$ bundle exec rspec
+```

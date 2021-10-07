@@ -48,7 +48,7 @@ module Symplectic
           xml_document.is_current_staff = csv_file[12]
           xml_document.is_login_allowed = csv_file[13]
 
-          if !xml_document.arrive_date_element.nil?
+          unless xml_document.arrive_date_element.nil?
             if csv_file[14].empty?
               xml_document.arrive_date_element.remove
             else
@@ -56,7 +56,7 @@ module Symplectic
             end
           end
 
-          if !xml_document.leave_date_element.nil?
+          unless xml_document.leave_date_element.nil?
             if csv_file[15].empty?
               xml_document.leave_date_element.remove
             else
@@ -70,7 +70,7 @@ module Symplectic
           xml_document
         end
 
-        def self.perform(csv_path:, xml_path:)
+        def self.perform(csv_path:)
           csv_table = build_csv_file(path: csv_path)
 
           request_document = build_request_document
@@ -78,8 +78,7 @@ module Symplectic
 
           csv_rows = csv_table.to_a[1..]
           csv_rows.each_with_index do |csv_row, index|
-
-            user = if index > 0
+            user = if index.positive?
                      users.append_user
                    else
                      users.last
