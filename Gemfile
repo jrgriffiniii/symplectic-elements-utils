@@ -9,5 +9,7 @@ gem 'thor'
 
 group :development, :test do
   gem 'bixby'
+  gem 'codecov'
   gem 'pry-byebug'
+  gem 'rspec'
 end

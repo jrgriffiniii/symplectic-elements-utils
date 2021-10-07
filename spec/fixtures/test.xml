@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<api:import-users-request xmlns:api="http://www.symplectic.co.uk/publications/api">
+  <api:users>
+    <api:user>
+      <api:title/>
+      <api:initials>AS</api:initials>
+      <api:first-name>Alice</api:first-name>
+      <api:last-name>Smith</api:last-name>
+      <api:known-as/>
+      <api:suffix/>
+      <api:email>user1@Princeton.EDU</api:email>
+      <api:authenticating-authority>CAS</api:authenticating-authority>
+      <api:username>user1</api:username>
+      <api:proprietary-id>000000001</api:proprietary-id>
+      <api:primary-group-descriptor>English</api:primary-group-descriptor>
+      <api:is-academic>true</api:is-academic>
+      <api:is-login-allowed>false</api:is-login-allowed>
+      <api:is-current-staff>true</api:is-current-staff>
+      <api:generic-field-01>Faculty</api:generic-field-01><!-- Position -->
+      <api:generic-field-02>English</api:generic-field-02><!-- Department -->
+    </api:user>
+    <api:user>
+      <api:title/>
+      <api:initials>BJ</api:initials>
+      <api:first-name>Bob</api:first-name>
+      <api:last-name>Jones</api:last-name>
+      <api:known-as/>
+      <api:suffix/>
+      <api:email>user2@princeton.edu</api:email>
+      <api:authenticating-authority>CAS</api:authenticating-authority>
+      <api:username>user2</api:username>
+      <api:proprietary-id>000000010</api:proprietary-id>
+      <api:primary-group-descriptor>Electrical Engineering</api:primary-group-descriptor>
+      <api:is-academic>true</api:is-academic>
+      <api:is-login-allowed>false</api:is-login-allowed>
+      <api:is-current-staff>true</api:is-current-staff>
+      <api:generic-field-01>Faculty</api:generic-field-01><!-- Position -->
+      <api:generic-field-02>Electrical Engineering</api:generic-field-02><!-- Department -->
+    </api:user>
+  </api:users>
+</api:import-users-request>

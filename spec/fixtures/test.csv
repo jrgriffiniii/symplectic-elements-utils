@@ -1,0 +1,4 @@
+"[Title]","[Initials]","[Firstname]","[Lastname]","[KnownAs]","[Suffix]","[Email]","[AuthenticatingAuthority]","[Username]","[Proprietary_ID]","[PrimaryGroupDescriptor]","[IsAcademic]","[IsCurrent]","[LoginAllowed]","[ArriveDate]","[LeaveDate]","[Position]","[Department]"
+"","AS","Alice","Smith","","","user1@Princeton.EDU","CAS","user1","000000001","English","TRUE","TRUE","FALSE","","","Faculty","English"
+"","BJ","Bob","Jones","","","user2@princeton.edu","CAS","user2","000000010","Electrical Engineering","TRUE","TRUE","FALSE","","","Faculty","Electrical Engineering"
+"","JB","Jane","Brown","","","user3@princeton.edu","CAS","user3","000000100","Molecular Biology","TRUE","TRUE","FALSE","","","Faculty","Molecular Biology"

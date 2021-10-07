@@ -24,7 +24,7 @@ module Elements
       csv_path = options[:csv_import]
       xml_path = options[:xml_export]
 
-      xml_document = self.class.csv_transform_job.perform(csv_path: csv_path, xml_path: xml_path)
+      xml_document = self.class.csv_transform_job.perform(csv_path: csv_path)
 
       File.open(xml_path, "w") do |f|
         f.write(xml_document.to_xml)

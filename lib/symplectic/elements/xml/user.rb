@@ -111,25 +111,31 @@ module Symplectic
           primary_group_descriptor_element.content = value
         end
 
+        # rubocop:disable Naming/PredicateName
         def is_academic_element
           find_attribute_element('./api:is-academic')
         end
+        # rubocop:enable Naming/PredicateName
 
         def is_academic=(value)
           is_academic_element.content = value == 'TRUE'
         end
 
+        # rubocop:disable Naming/PredicateName
         def is_login_allowed_element
           find_attribute_element('./api:is-login-allowed')
         end
+        # rubocop:enable Naming/PredicateName
 
         def is_login_allowed=(value)
           is_login_allowed_element.content = value == 'TRUE'
         end
 
+        # rubocop:disable Naming/PredicateName
         def is_current_staff_element
           find_attribute_element('./api:is-current-staff')
         end
+        # rubocop:enable Naming/PredicateName
 
         def is_current_staff=(value)
           is_current_staff_element.content = value == 'TRUE'
