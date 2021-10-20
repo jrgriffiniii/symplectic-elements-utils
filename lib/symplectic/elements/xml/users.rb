@@ -19,7 +19,8 @@ module Symplectic
         end
 
         def element
-          @element ||= @document.root.at_xpath('./api:users', **namespaces)
+          # <api:user-feed-entry>
+          @element ||= @document.root.at_xpath('//api:users', **namespaces) || @document.root.at_xpath('//api:user-feed-entry', **namespaces)
         end
 
         def children_elements

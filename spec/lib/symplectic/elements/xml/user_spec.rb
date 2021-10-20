@@ -24,8 +24,10 @@ describe Symplectic::Elements::XML::User do
   describe '#element' do
     it 'accesses the XML Element node in the request XML Document' do
       expect(user.element).to be_a(Nokogiri::XML::Element)
-      expect(user.element.to_xml).to include('<api:user>')
-      expect(user.element.to_xml).to include('</api:user>')
+      expect(user.element.name).to include('user')
+      expect(user.element.namespaces).to include(
+        "xmlns:api"=>"http://www.symplectic.co.uk/publications/api"
+      )
     end
   end
 end
