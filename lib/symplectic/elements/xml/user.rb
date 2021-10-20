@@ -145,21 +145,22 @@ module Symplectic
           find_attribute_element('./api:arrive-date')
         end
 
-        def arrive_date=(value)
-          arrive_date_element.content = value
-        end
-
         def leave_date_element
           find_attribute_element('./api:leave-date')
         end
 
-        def leave_date=(value)
-          leave_date_element.content = value
+        def self.attribute_names
+          [
+            :arrive_date,
+            :leave_date,
+            :position,
+            :department,
+            :generic_field_01,
+            :generic_field_02
+          ]
         end
 
-        [
-          :position
-        ].each do |attr_name|
+        attribute_names.each do |attr_name|
           define_method("#{attr_name}=") do |*args|
             attr_element = send("#{attr_name}_element".to_sym)
             attr_element.content = args.first
@@ -170,38 +171,6 @@ module Symplectic
             attr_element = send("#{attr_name}_element")
             attr_element.content
           end
-        end
-
-        # def position
-        #  position_element.content
-        # end
-
-        # def position=(value)
-        #  position_element.content = value
-        # end
-
-        def department
-          department_element.content
-        end
-
-        def department=(value)
-          department_element.content = value
-        end
-
-        def generic_field_01=(value)
-          generic_field_01_element.content = value
-        end
-
-        def generic_field_01
-          generic_field_01_element.content
-        end
-
-        def generic_field_02
-          generic_field_02_element.content
-        end
-
-        def generic_field_02=(value)
-          generic_field_02_element.content = value
         end
 
         private
@@ -221,12 +190,10 @@ module Symplectic
         end
 
         def position_element
-          # find_attribute_element('./api:position')
           generic_field_01_element
         end
 
         def department_element
-          # find_attribute_element('./api:department')
           generic_field_02_element
         end
       end
