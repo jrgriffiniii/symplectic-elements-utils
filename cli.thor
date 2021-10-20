@@ -104,7 +104,7 @@ module Elements
       xml_output = options[:xml_output]
 
       user_feed = client.find_user_feed(id: id)
-      binding.pry
+      user_feed.get
 
       File.open(xml_output, "w") do |f|
         f.write(user_feed.document.to_xml)

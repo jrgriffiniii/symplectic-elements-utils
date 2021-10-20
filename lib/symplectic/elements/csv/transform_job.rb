@@ -10,10 +10,8 @@ module Symplectic
         # @param [String] path
         # @returns [CSV::Table]
         def self.build_csv_file(path:)
-          #csv_file_content = File.read(path)
-
           result = nil
-          csv_file_content = File.open(path, "r:bom|utf-8") do |f|
+          File.open(path, "r:bom|utf-8") do |f|
             result = ::CSV.parse(f.read, headers: true)
           end
           result
@@ -53,7 +51,7 @@ module Symplectic
           xml_document.is_login_allowed = csv_file[13]
 
           unless xml_document.arrive_date_element.nil?
-            if csv_file[14].nil? || csv_file[14].empty?
+            if csv_file[14].blank?
               xml_document.arrive_date_element.remove
             else
               xml_document.arrive_date = csv_file[14]
@@ -61,7 +59,7 @@ module Symplectic
           end
 
           unless xml_document.leave_date_element.nil?
-            if csv_file[15].nil? || csv_file[15].empty?
+            if csv_file[15].blank?
               xml_document.leave_date_element.remove
             else
               xml_document.leave_date = csv_file[15]

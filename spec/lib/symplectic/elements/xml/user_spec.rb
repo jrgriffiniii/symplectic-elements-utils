@@ -26,7 +26,7 @@ describe Symplectic::Elements::XML::User do
       expect(user.element).to be_a(Nokogiri::XML::Element)
       expect(user.element.name).to include('user')
       expect(user.element.namespaces).to include(
-        "xmlns:api"=>"http://www.symplectic.co.uk/publications/api"
+        "xmlns:api" => "http://www.symplectic.co.uk/publications/api"
       )
     end
   end

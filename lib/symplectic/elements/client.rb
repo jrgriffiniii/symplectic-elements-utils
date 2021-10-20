@@ -25,7 +25,7 @@ module Symplectic
       end
 
       def self.development_config_yaml
-        YAML.load(development_config_file)
+        YAML.safe_load(development_config_file)
       end
 
       def self.development_config
