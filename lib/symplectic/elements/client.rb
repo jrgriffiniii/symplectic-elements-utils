@@ -16,6 +16,60 @@ module Symplectic
       end
       # rubocop:enable Metrics/ParameterLists
 
+      def self.development_config_path
+        File.join('config', 'development.yml')
+      end
+
+      def self.development_config_file
+        File.read(development_config_path)
+      end
+
+      def self.development_config_yaml
+        YAML.safe_load(development_config_file)
+      end
+
+      def self.development_config
+        OpenStruct.new(development_config_yaml)
+      end
+
+      def self.development
+        new(
+          host: development_config.host,
+          port: development_config.port,
+          username: development_config.username,
+          password: development_config.password,
+          endpoint: development_config.endpoint,
+          protocol: development_config.protocol
+        )
+      end
+
+      def self.production_config_path
+        File.join('config', 'production.yml')
+      end
+
+      def self.production_config_file
+        File.read(production_config_path)
+      end
+
+      def self.production_config_yaml
+        YAML.safe_load(production_config_file)
+      end
+
+      def self.production_config
+        OpenStruct.new(production_config_yaml)
+      end
+
+      def self.production
+        new(
+          host: production_config.host,
+          port: production_config.port,
+          username: production_config.username,
+          password: production_config.password,
+          endpoint: production_config.endpoint,
+          protocol: production_config.protocol
+        )
+      end
+
       def find_user_feed(id:)
         UserFeed.new(client: self, id: id)
       end

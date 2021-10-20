@@ -2,6 +2,7 @@
 
 require_relative 'lib/symplectic'
 require 'thor'
+require 'yaml'
 
 module Elements
   class Cli < Thor
@@ -18,8 +19,8 @@ module Elements
 
   class Csv < Cli
     desc 'transform', 'generate the XML from the CSV'
-    option :csv_import, aliases: :i, required: true
-    option :xml_export, aliases: :e, required: true
+    option :csv_import, aliases: '-i', required: true
+    option :xml_export, aliases: '-e', required: true
     def transform
       csv_path = options[:csv_import]
       xml_path = options[:xml_export]
@@ -36,31 +37,124 @@ module Elements
 
   class UserFeeds < Cli
     desc 'create', 'Use the Symplectic Elements API to create a new User Feed'
-    option :host, aliases: :h, required: true
-    option :port, aliases: :P, required: true
-    option :endpoint, aliases: :e, required: true
-    option :username, aliases: :u, required: true
-    option :password, aliases: :p, required: true
-    option :id, aliases: :i, required: true
-    option :xml_request, aliases: :x, required: true
+    option :host, aliases: '-h', required: false
+    option :port, aliases: '-P', required: false
+    option :endpoint, aliases: '-e', required: false
+    option :username, aliases: '-u', required: false
+    option :password, aliases: '-p', required: false
+    option :environment, aliases: '-E', required: false
+    option :id, aliases: '-i', required: true
+    option :xml_request, aliases: '-x', required: true
     def create
       host = options[:host]
       port = options[:port]
       endpoint = options[:endpoint]
 
+      environment = options[:environment]
+
       username = options[:username]
       password = options[:password]
 
+      client = if environment == 'production'
+                 Symplectic::Elements::Client.production
+               elsif environment == 'development'
+                 Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
+               else
+                 Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
+               end
+
       id = options[:id]
       xml_request = options[:xml_request]
-
-      client = Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
 
       user_feed = client.find_user_feed(id: id)
       user_feed&.delete
 
       xml = File.read(xml_request)
       user_feed.create(xml: xml)
+    end
+
+    desc 'request', 'Use the Symplectic Elements API to request a new User Feed'
+    option :host, aliases: '-h', required: false
+    option :port, aliases: '-P', required: false
+    option :endpoint, aliases: '-e', required: false
+    option :username, aliases: '-u', required: false
+    option :password, aliases: '-p', required: false
+    option :environment, aliases: '-E', required: false
+    option :id, aliases: '-i', required: true
+    option :xml_output, aliases: '-o', required: true
+    def request
+      host = options[:host]
+      port = options[:port]
+      endpoint = options[:endpoint]
+
+      environment = options[:environment]
+
+      username = options[:username]
+      password = options[:password]
+
+      client = if environment == 'production'
+                 Symplectic::Elements::Client.production
+               elsif environment == 'development'
+                 Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
+               else
+                 Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
+               end
+
+      id = options[:id]
+      xml_output = options[:xml_output]
+
+      user_feed = client.find_user_feed(id: id)
+      user_feed.get
+
+      File.open(xml_output, "w") do |f|
+        f.write(user_feed.document.to_xml)
+      end
+    end
+
+    desc 'delete', 'Delete the Symplectic Elements API to delete a given User Feed'
+    option :host, aliases: '-h', required: false
+    option :port, aliases: '-P', required: false
+    option :endpoint, aliases: '-e', required: false
+    option :username, aliases: '-u', required: false
+    option :password, aliases: '-p', required: false
+    option :environment, aliases: '-E', required: false
+    option :id, aliases: '-i', required: true
+    option :xml_output, aliases: '-o', required: true
+    def delete
+      host = options[:host]
+      port = options[:port]
+      endpoint = options[:endpoint]
+
+      environment = options[:environment]
+
+      username = options[:username]
+      password = options[:password]
+
+      client = if environment == 'production'
+                 Symplectic::Elements::Client.production
+               elsif environment == 'development'
+                 Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
+               else
+                 Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
+               end
+
+      id = options[:id]
+      xml_output = options[:xml_output]
+
+      user_feed = client.find_user_feed(id: id)
+      user_feed&.delete
     end
   end
 end
