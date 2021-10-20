@@ -51,7 +51,7 @@ module Symplectic
           xml_document.is_login_allowed = csv_file[13]
 
           unless xml_document.arrive_date_element.nil?
-            if csv_file[14].blank?
+            if csv_file[14].nil? || csv_file[14].empty?
               xml_document.arrive_date_element.remove
             else
               xml_document.arrive_date = csv_file[14]
@@ -59,7 +59,7 @@ module Symplectic
           end
 
           unless xml_document.leave_date_element.nil?
-            if csv_file[15].blank?
+            if csv_file[15].nil? || csv_file[15].empty?
               xml_document.leave_date_element.remove
             else
               xml_document.leave_date = csv_file[15]

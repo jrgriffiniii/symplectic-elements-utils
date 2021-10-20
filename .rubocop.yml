@@ -21,11 +21,22 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/symplectic/elements/xml/user.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/symplectic/elements/csv/transform_job.rb'
+
 Metrics/MethodLength:
   Exclude:
     - 'lib/symplectic/elements/csv/transform_job.rb'
     - 'lib/symplectic/elements/user_feed.rb'
     - 'cli.thor'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/symplectic/elements/csv/transform_job.rb'
+
+Rails/Blank:
+  Enabled: false
 
 RSpec/ExampleLength:
   Exclude:
