@@ -59,6 +59,10 @@ module Elements
                  Symplectic::Elements::Client.production
                elsif environment == 'development'
                  Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
                else
                  Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
                end
@@ -96,6 +100,10 @@ module Elements
                  Symplectic::Elements::Client.production
                elsif environment == 'development'
                  Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
                else
                  Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
                end
@@ -134,6 +142,10 @@ module Elements
                  Symplectic::Elements::Client.production
                elsif environment == 'development'
                  Symplectic::Elements::Client.development
+               elsif username.nil?
+                 raise("Failed to parse the username: #{username}")
+               elsif host.nil?
+                 raise("Failed to parse the host: #{host}")
                else
                  Symplectic::Elements::Client.new(host: host, port: port, endpoint: endpoint, username: username, password: password)
                end
@@ -143,10 +155,6 @@ module Elements
 
       user_feed = client.find_user_feed(id: id)
       user_feed&.delete
-
-      File.open(xml_output, "w") do |f|
-        f.write(user_feed.document.to_xml)
-      end
     end
   end
 end
