@@ -10,26 +10,27 @@ module Symplectic
       end
 
       class Page
-        attr_reader :response
+        attr_reader :id
 
         def self.per_page_param
           1000
         end
 
-        #def initialize(id:, user_feed:, client:, last_page: nil)
         def initialize(id:, user_feed:, last_page: nil)
           @id = id
-          #@client = client
-          @last_page = last_page
-          @after_id = nil
-
           @user_feed = user_feed
+          @last_page = last_page
 
           request!
 
-          binding.pry
-          @after_id = @id.to_i + 1
-          @next_page = self.class.new(id: @after_id, user_feed: user_feed, last_page: self)
+          if !last_page?
+            next_page_id = @id + 1
+            @next_page = self.class.new(id: next_page_id, user_feed: user_feed, last_page: self)
+          end
+        end
+
+        def last_page?
+          id == last_page_id
         end
 
         def path
@@ -40,16 +41,26 @@ module Symplectic
           Nokogiri::XML(@xml)
         end
 
-        def entry_elements
-          document.at_xpath('//', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
+        def first_page_element
+          document.at_xpath('//api:pagination/api:page[@position="first"]', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
         end
 
-        def pagination_elements
-          document.xpath('//api:pagination/api:page', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
+        def last_page_element
+          document.at_xpath('//api:pagination/api:page[@position="last"]', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
+        end
+
+        def last_page_id
+          content = last_page_element['number']
+          content.to_i
         end
 
         def page_element
-          document.at_xpath('//api:pagination/api:page', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
+          document.at_xpath('//api:pagination/api:page[@position="this"]', api: 'http://www.symplectic.co.uk/publications/api', atom: "http://www.w3.org/2005/Atom")
+        end
+
+        def page_id
+          content = page_element['number']
+          content.to_i
         end
 
         def request!
@@ -60,32 +71,25 @@ module Symplectic
 
           @persisted = true
           @xml = @response.body
-          #@document = Nokogiri::XML(@xml)
-          @id = page_element['number']
+          @id = page_id
 
           @response
         end
 
         def get
-          #@client.get(path, perPage: self.class.per_page_param)
-          #@client.get(path, 'per-page': self.class.per_page_param)
-
           request_params = if @last_page.nil?
                             {
                               'per-page' => self.class.per_page_param
                             }
                           else
                             {
-                              'per-page' => self.class.per_page_param,
-                              'after-id' => @last_page.id
+                              'page' => @last_page.id + 1,
+                              'per-page' => self.class.per_page_param
                             }
                           end
 
-          #@after_id = nil
-
-          @user_feed.client.get(path, **request_params)
+          @user_feed.client.get(path, request_params)
         rescue StandardError => error
-          binding.pry
           nil
         end
       end
@@ -96,23 +100,6 @@ module Symplectic
         @id = id
         # Remove this
         @last_page = last_page
-
-        #@pages = if last_page.nil?
-        #           []
-        #         else
-        #           last_pages.pages + last_page
-        #         end
-
-        #@persisted = false
-        #@xml = nil
-
-        #get_response = get
-        #return if get_response.nil?
-
-        #@persisted = true
-        @first_page = Page.new(id: 0, user_feed: self)
-
-        #@xml = @first_page.response.body
       end
 
       def persisted?
@@ -124,23 +111,7 @@ module Symplectic
       end
 
       def get
-        #@client.get(path, perPage: self.class.per_page_param)
-        #@client.get(path, 'per-page': self.class.per_page_param)
-
-        request_params = if @last_page.nil?
-                           {
-                             'per-page' => self.class.per_page_param
-                           }
-                         else
-                           {
-                             'per-page' => self.class.per_page_param,
-                             'after-id' => @last_page.id
-                           }
-                         end
-
-        @client.get(path, **request_params)
-      rescue StandardError
-        nil
+        @first_page = Page.new(id: 1, user_feed: self)
       end
 
       def delete
@@ -153,9 +124,11 @@ module Symplectic
       end
 
       def document
-        return unless @xml
 
-        Nokogiri::XML(@xml)
+        binding.pry
+        #return unless @xml
+
+        #Nokogiri::XML(@xml)
       end
 
       def entry_elements
