@@ -43,8 +43,20 @@ module Symplectic
         )
       end
 
+      def self.production_config_path
+        File.join('config', 'production.yml')
+      end
+
+      def self.production_config_file
+        File.read(production_config_path)
+      end
+
+      def self.production_config_yaml
+        YAML.safe_load(production_config_file)
+      end
+
       def self.production_config
-        OpenStruct.new(development_config_yaml)
+        OpenStruct.new(production_config_yaml)
       end
 
       def self.production
