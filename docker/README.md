@@ -71,10 +71,22 @@ SELECT QUOTENAME(DB_NAME())
 GO
 ```
 
-```powershell
-> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -i .\select_table_names.sql
-```
-
 ### Exporting the Database Tables
 
-*Being drafted*
+```powershell
+> New-Item .\exports -ItemType directory
+> function Export-Table {
+    process {
+      $TableName = $_.Trim()
+
+      if ( ($TableName.IndexOf("rows affected") -eq -1) -and ($TableName.length -gt 0) )
+      {
+        $ExportFilePath = '.\exports\' + $TableName.Replace("[", "").Replace("]", "").Replace(".", "_") + '.bcp'
+
+        Write-Host "Exporting $TableName to $ExportFilePath..."
+        bcp $TableName out $ExportFilePath -U Sympsql_Dev -P $Password -S CISDR300W -w
+      }
+    }
+  }
+> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -h -1 -i .\select_table_names.sql | Export-Table
+```
