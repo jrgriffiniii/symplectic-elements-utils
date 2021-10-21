@@ -57,18 +57,24 @@ One then finds the following:
 #### Listing the database tables
 
 ```powershell
-> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'"
+> Add-Item \.select_table_names.sql
+> Add-Content \.select_table_names.sql '-- Select all table names for the elements database'
 ```
 
-The database tables usually follow a structure similar to the following:
+Then, please copy the contents of `sql/select_table_names.sql`:
+```tsql
+SELECT QUOTENAME(DB_NAME())
+  + '.' + QUOTENAME(SCHEMA_NAME(SCHEMA_ID))
+  + '.' + QUOTENAME(name)
+  FROM sys.tables;
 
-```mssql
-table_name
---------------------------------------------------------------------------------------------------------------------------------
-#Publication Record (Field Display Names)___________________________________________________________________________000000002107
-#Publication Record_________________________________________________________________________________________________000000002108
+GO
+```
+
+```powershell
+> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -i .\select_table_names.sql
 ```
 
 ### Exporting the Database Tables
 
-*This is being drafted.*
+*Being drafted*

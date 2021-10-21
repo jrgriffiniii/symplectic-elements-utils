@@ -1,0 +1,6 @@
+SELECT QUOTENAME(DB_NAME())
+  + '.' + QUOTENAME(SCHEMA_NAME(SCHEMA_ID))
+  + '.' + QUOTENAME(name)
+  FROM sys.tables;
+
+GO
