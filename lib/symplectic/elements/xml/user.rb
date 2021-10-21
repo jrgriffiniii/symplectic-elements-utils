@@ -145,37 +145,33 @@ module Symplectic
           find_attribute_element('./api:arrive-date')
         end
 
-        def arrive_date=(value)
-          arrive_date_element.content = value
-        end
-
         def leave_date_element
           find_attribute_element('./api:leave-date')
         end
 
-        def leave_date=(value)
-          leave_date_element.content = value
+        def self.attribute_names
+          [
+            :arrive_date,
+            :leave_date,
+            :position,
+            :department,
+            :generic_field_01,
+            :generic_field_02
+          ]
         end
 
-        def generic_field_01_element
-          find_attribute_element('./api:generic-field-01')
-        end
-        alias position_element generic_field_01_element
+        attribute_names.each do |attr_name|
+          define_method("#{attr_name}=") do |*args|
+            attr_element = send("#{attr_name}_element".to_sym)
+            attr_element.content = args.first
+            attr_element.content
+          end
 
-        def generic_field_01=(value)
-          generic_field_01_element.content = value
+          define_method(attr_name.to_s) do
+            attr_element = send("#{attr_name}_element")
+            attr_element.content
+          end
         end
-        alias position= generic_field_01=
-
-        def generic_field_02_element
-          find_attribute_element('./api:generic-field-02')
-        end
-        alias department_element generic_field_02_element
-
-        def generic_field_02=(value)
-          generic_field_02_element.content = value
-        end
-        alias department= generic_field_02=
 
         private
 
@@ -183,6 +179,22 @@ module Symplectic
           return if element.nil?
 
           element.at_xpath(xpath, **namespaces)
+        end
+
+        def generic_field_01_element
+          find_attribute_element('./api:generic-field-01')
+        end
+
+        def generic_field_02_element
+          find_attribute_element('./api:generic-field-02')
+        end
+
+        def position_element
+          generic_field_01_element
+        end
+
+        def department_element
+          generic_field_02_element
         end
       end
     end

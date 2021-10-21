@@ -15,11 +15,29 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Exclude:
     - 'spec/lib/symplectic/elements/xml/users_spec.rb'
+    - 'spec/lib/symplectic/elements/csv/transform_job_spec.rb'
 
 Metrics/ClassLength:
   Exclude:
     - 'lib/symplectic/elements/xml/user.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/symplectic/elements/csv/transform_job.rb'
+
 Metrics/MethodLength:
   Exclude:
     - 'lib/symplectic/elements/csv/transform_job.rb'
+    - 'lib/symplectic/elements/user_feed.rb'
+    - 'cli.thor'
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'lib/symplectic/elements/csv/transform_job.rb'
+
+Rails/Blank:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/lib/symplectic/elements/csv/transform_job_spec.rb'
