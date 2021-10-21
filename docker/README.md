@@ -4,48 +4,18 @@
 ### Getting Started
 
 ```bash
-$ docker pull mcr.microsoft.com/mssql/server:2017-latest
-$ docker run \
-  --name sqlenterprise \
-  --hostname sqlenterprise \
-  --publish 1433:1433 \
-  --env 'ACCEPT_EULA=Y' \
-  --env 'SA_PASSWORD=<YourStrong!Passw0rd>' \
-  --env 'MSSQL_PID=Enterprise' \
-  --detach mcr.microsoft.com/mssql/server:2017-latest
+$ bash bin/start.sh
 ```
+
+### Accessing the terminal for the sqlcmd
 
 ```bash
-$ docker exec \
-  --interactive \
-  --tty \
-  sqlenterprise \
-  /opt/mssql-tools/bin/sqlcmd \
-  -S localhost \
-  -U SA \
-  -P '<YourStrong!Passw0rd>'
+$ bash bin/sqlcmd.sh
 ```
 
-Querying for Tables within a Database
+## Exporting the Elements Databases
 
-```sql
-> USE [<DATABASE_NAME>];
-> SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE';
-```
-
-Exporting Tables from a Database
-
-From the PowerShell within the server environment:
-```powershell
-> Invoke-Sqlcmd -Query "SELECT * FROM [Sandbox].[dbo].[Customer]" -ServerInstance ".\SQL2019" | Export-DbaDbTableData -FilePath '.\export.sql'
-```
-
-By invoking `Get-DbaDbTable`:
-```powershell
-> Get-DbaDbTable -SqlInstance sqlenterprise\SQL2019 -Database Enterprise -Table 'dbo.Table1', 'dbo.Table2' |  Export-DbaDbTableData -FilePath .\Combined.sql -Append
-```
-
-### Exporting from the Database Server
+### Locating the Credentials
 
 Within the Windows Server environment, one may find the configuration file for the Symplectic Elements installation using the Internet Information Services (IIS):
 ```powershell
@@ -54,24 +24,51 @@ Within the Windows Server environment, one may find the configuration file for t
 
 One then finds the following:
 
-#### Developer
+#### Development
 ```xml
 <dataSources>
-  <dataSource database="publications" connectionString="Data Source=CISDR300W;Initial Catalog=elements;Integrated Security=False;User ID=Sympsql_Dev;Password=$PASSWORD" />
-  <dataSource database="reporting" connectionString="Data Source=CISDR300W;Initial Catalog=elements-reporting;Integrated Security=False;User ID=Sympsql_Dev;Password=$PASSWORD" />
+  <dataSource database="publications" connectionString="Data Source=CISDR300W;Initial Catalog=elements;Integrated Security=False;User ID=Sympsql_Dev;Password=$Password" />
+  <dataSource database="reporting" connectionString="Data Source=CISDR300W;Initial Catalog=elements-reporting;Integrated Security=False;User ID=Sympsql_Dev;Password=$Password" />
 </dataSources>
 ```
 
 #### Production
 ```xml
 <dataSources>
-  <dataSource database="publications" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements;Integrated Security=False;User ID=sympsql;Password=$PASSWORD" />
-  <dataSource database="reporting" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements-reporting;Integrated Security=False;User ID=sympsql;Password=$PASSWORD" />
+  <dataSource database="publications" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements;Integrated Security=False;User ID=sympsql;Password=$Password" />
+  <dataSource database="reporting" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements-reporting;Integrated Security=False;User ID=sympsql;Password=$Password" />
 </dataSources>
 ```
 
-One can then export the database tables by invoking `Get-DbaDbTable`:
+### Connecting to the Server Database
+
+#### Testing the connection
+
 ```powershell
-> Get-DbaDbTable -SqlInstance sqlenterprise\SQL2019 -Database Enterprise -Table 'dbo.Table1', 'dbo.Table2' | Export-DbaDbTableData -FilePath .\Combined.sql -Append
-> Get-DbaDbTable -SqlInstance sqlenterprise\SQL2019 -Database Enterprise -Table 'dbo.Table1', 'dbo.Table2' | Export-DbaDbTableData -FilePath .\Combined.sql -Append
+> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -Q "SELECT @@VERSION"
 ```
+
+#### Listing the databases
+
+```powershell
+> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -Q "SELECT NAME FROM sys.databases"
+```
+
+#### Listing the database tables
+
+```powershell
+> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'"
+```
+
+The database tables usually follow a structure similar to the following:
+
+```mssql
+table_name
+--------------------------------------------------------------------------------------------------------------------------------
+#Publication Record (Field Display Names)___________________________________________________________________________000000002107
+#Publication Record_________________________________________________________________________________________________000000002108
+```
+
+### Exporting the Database Tables
+
+*This is being drafted.*
