@@ -27,16 +27,16 @@ One then finds the following:
 #### Development
 ```xml
 <dataSources>
-  <dataSource database="publications" connectionString="Data Source=CISDR300W;Initial Catalog=elements;Integrated Security=False;User ID=Sympsql_Dev;Password=$Password" />
-  <dataSource database="reporting" connectionString="Data Source=CISDR300W;Initial Catalog=elements-reporting;Integrated Security=False;User ID=Sympsql_Dev;Password=$Password" />
+  <dataSource database="publications" connectionString="Data Source=CISDR300W;Initial Catalog=elements;Integrated Security=False;User ID=Sympsql_Dev;Password=$DbPassword" />
+  <dataSource database="reporting" connectionString="Data Source=CISDR300W;Initial Catalog=elements-reporting;Integrated Security=False;User ID=Sympsql_Dev;Password=$DbPassword" />
 </dataSources>
 ```
 
 #### Production
 ```xml
 <dataSources>
-  <dataSource database="publications" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements;Integrated Security=False;User ID=sympsql;Password=$Password" />
-  <dataSource database="reporting" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements-reporting;Integrated Security=False;User ID=sympsql;Password=$Password" />
+  <dataSource database="publications" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements;Integrated Security=False;User ID=sympsql;Password=$DbPassword" />
+  <dataSource database="reporting" connectionString="Data Source=cisdr200w.princeton.edu;Initial Catalog=elements-reporting;Integrated Security=False;User ID=sympsql;Password=$DbPassword" />
 </dataSources>
 ```
 
@@ -45,13 +45,15 @@ One then finds the following:
 #### Testing the connection
 
 ```powershell
-> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -Q "SELECT @@VERSION"
+> $DbUser = 'Sympsql_Dev'
+> $DbServer = 'CISDR300W'
+> sqlcmd -U $DbUser -P $DbPassword -S $DbServer -Q "SELECT @@VERSION"
 ```
 
 #### Listing the databases
 
 ```powershell
-> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -Q "SELECT NAME FROM sys.databases"
+> sqlcmd -U $DbUser -P $DbPassword -S $DbServer -Q "SELECT NAME FROM sys.databases"
 ```
 
 #### Listing the database tables
@@ -75,18 +77,44 @@ GO
 
 ```powershell
 > New-Item .\exports -ItemType directory
+> Set-Location .\exports
 > function Export-Table {
     process {
       $TableName = $_.Trim()
 
-      if ( ($TableName.IndexOf("rows affected") -eq -1) -and ($TableName.length -gt 0) )
+      if (($TableName.IndexOf("rows affected") -eq -1) -and ($TableName.length -gt 0))
       {
-        $ExportFilePath = '.\exports\' + $TableName.Replace("[", "").Replace("]", "").Replace(".", "_") + '.bcp'
+        $SchemaFilePath = $TableName.Replace("[", "").Replace("]", "").Replace(".", "_") + '_schema.xml'
+        Write-Host "Exporting $TableName schema to $SchemaFilePath..."
+        bcp $TableName format nul -x -f $SchemaFilePath -U $DbUser -P $DbPassword -S $DbServer -w
 
-        Write-Host "Exporting $TableName to $ExportFilePath..."
-        bcp $TableName out $ExportFilePath -U Sympsql_Dev -P $Password -S CISDR300W -w
+        $ExportFilePath = $TableName.Replace("[", "").Replace("]", "").Replace(".", "_") + '.bcp'
+        Write-Host "Exporting $TableName rows to $ExportFilePath..."
+        bcp $TableName out $ExportFilePath -U $DbUser -P $DbPassword -S $DbServer -w
       }
     }
   }
-> sqlcmd -U Sympsql_Dev -P $Password -S CISDR300W -d elements -h -1 -i .\select_table_names.sql | Export-Table
+> sqlcmd -U $DbUser -P $DbPassword -S $DbServer -d elements -h -1 -i ..\select_table_names.sql | Export-Table
+```
+
+In order to transfer these files to a local development environment, one must mount the CIFS file share hosted for one's user account using the path `\\files.princeton.edu\$NetID`. For the purposes of this example, I am mounting this to the drive `F:\`.
+
+Then, please copy the files from the Windows Server environment with the following:
+
+```powershell
+> Set-Location ..
+> Copy-Item -Path .\exports -Destination F:\exports -Recurse
+```
+
+From within the local development environment, please connect to the same CIFS file share, and then please copy these files:
+
+```bash
+$ cp -r /Volumes/$NET_ID/exports/*bcp ./exports/
+$ cp -r /Volumes/$NET_ID/exports/*bcp ./exports/
+```
+
+### Importing the Database Tables
+
+```bash
+$ bin/import.sh exports/
 ```
