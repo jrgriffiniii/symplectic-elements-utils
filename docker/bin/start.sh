@@ -1,10 +1,10 @@
 #!/bin/bash
 
-export DOCKER_IMAGE=mcr.microsoft.com/mssql/server:2017-latest
-export SA_PASSWORD="<YourStrong!Passw0rd>"
-export MSSQL_PID=Enterprise
-export DOCKER_CONTAINER=sqlenterprise
-export DOCKER_HOSTNAME=sqlenterprise
+DOCKER_IMAGE=mcr.microsoft.com/mssql/server:2017-latest
+SA_PASSWORD="<YourStrong!Passw0rd>"
+MSSQL_PID=Enterprise
+DOCKER_CONTAINER=sqlenterprise
+DOCKER_HOSTNAME=sqlenterprise
 
 /usr/bin/env docker pull \
   $DOCKER_IMAGE
@@ -16,4 +16,6 @@ export DOCKER_HOSTNAME=sqlenterprise
   --env 'ACCEPT_EULA=Y' \
   --env "SA_PASSWORD=$SA_PASSWORD" \
   --env "MSSQL_PID=$MSSQL_PID" \
-  --detach $DOCKER_IMAGE
+  --detach \
+  --mount type=bind,source="$(pwd)"/exports,target=/exports \
+  $DOCKER_IMAGE

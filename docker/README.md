@@ -118,3 +118,14 @@ $ cp -r /Volumes/$NET_ID/exports/*bcp ./exports/
 ```bash
 $ bin/import.sh exports/
 ```
+
+### Checking the Databases
+
+```bash
+$ bin/sqlcmd.sh
+```
+
+```mssql
+1> SELECT database_id,name FROM sys.databases;
+2> GO
+```
