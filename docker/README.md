@@ -73,7 +73,9 @@ SELECT QUOTENAME(DB_NAME())
 GO
 ```
 
-### Exporting the Database Tables
+### Generating the Database Table XML Format Files (`bulk copy program (bcp)`)
+
+From within the server environment, please execute the following:
 
 ```powershell
 > New-Item .\exports -ItemType directory
@@ -113,13 +115,64 @@ $ cp -r /Volumes/$NET_ID/exports/*bcp ./exports/
 $ cp -r /Volumes/$NET_ID/exports/*bcp ./exports/
 ```
 
-### Importing the Database Tables
+#### Importing the Database Tables
+
+From within the local development environment, one can then load the tables from `exports` by invoking:
 
 ```bash
 $ bin/import.sh exports/
 ```
 
-### Checking the Databases
+### Generating Database Backups (BACKUP Strategy)
+
+Then, please copy the contents of `sql/select_table_names.sql`:
+```tsql
+USE elements;
+GO
+BACKUP DATABASE elements
+TO DISK = 'c:\tmp\elements.bak' WITH FORMAT,
+  MEDIANAME = 'ElementsBackups',
+  NAME = 'Full Backup of elements';
+GO
+```
+
+## Generating Database Backups (T-SQL Strategy)
+
+Please copy the contents of `sql/backup.sql`:
+```tsql
+USE elements;
+GO
+
+DECLARE @TableCursor CURSOR;
+DECLARE @TableName varchar(255);
+
+BEGIN
+  SET @TableCursor = CURSOR FOR
+    SELECT table_name FROM elements.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';
+
+  OPEN @TableCursor;
+  FETCH NEXT FROM @TableCursor INTO @TableName;
+
+  WHILE @@FETCH_STATUS = 0
+  BEGIN
+    EXEC sp_help @TableName;
+    FETCH NEXT FROM @TableCursor INTO @TableName;
+  END;
+
+  CLOSE @TableCursor;
+  DEALLOCATE @TableCursor;
+END;
+
+GO
+```
+
+Then invoke:
+
+```powershell
+> sqlcmd -U $DbUser -P $DbPassword -S $DbServer -h -1 -d elements -i .\sql\backup.sql
+```
+
+## Checking the Databases
 
 ```bash
 $ bin/sqlcmd.sh
@@ -127,5 +180,12 @@ $ bin/sqlcmd.sh
 
 ```mssql
 1> SELECT database_id,name FROM sys.databases;
+2> GO
+```
+
+## Checking the Tables
+
+```mssql
+1> SELECT table_name FROM elements.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';
 2> GO
 ```
