@@ -7,7 +7,7 @@ module Symplectic
     end
 
     autoload(:XML, File.join(root_path, 'elements', 'xml'))
-    autoload(:CSV, File.join(root_path, 'elements', 'CSV'))
+    autoload(:CSV, File.join(root_path, 'elements', 'csv'))
     autoload(:UserFeed, File.join(root_path, 'elements', 'user_feed'))
     autoload(:Client, File.join(root_path, 'elements', 'client'))
   end
