@@ -16,6 +16,7 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 
 require 'nokogiri'
+require 'csv'
 require_relative '../lib/symplectic'
 
 ENV["RACK_ENV"] = "test"
