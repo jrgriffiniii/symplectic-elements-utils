@@ -127,7 +127,6 @@ module Elements
     option :password, aliases: '-p', required: false
     option :environment, aliases: '-E', required: false
     option :id, aliases: '-i', required: true
-    option :xml_output, aliases: '-o', required: true
     def delete
       host = options[:host]
       port = options[:port]
@@ -151,7 +150,6 @@ module Elements
                end
 
       id = options[:id]
-      xml_output = options[:xml_output]
 
       user_feed = client.find_user_feed(id: id)
       user_feed&.delete
