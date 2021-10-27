@@ -1,0 +1,99 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/symplectic-elements-utils
+
+    docker:
+      - image: circleci/ruby:2.7.4-node-browsers
+        environment:
+          RAILS_ENV: test
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - symplectic-elements-utils-{{ checksum "Gemfile" }}
+          - symplectic-elements-utils-
+
+      - run:
+          name: Install dependencies
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
+
+      - save_cache:
+          key: symplectic-elements-utils-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+
+  lint:
+    working_directory: ~/symplectic-elements-utils
+
+    docker:
+      - image: circleci/ruby:2.7.4-node-browsers
+        environment:
+          RAILS_ENV: test
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - symplectic-elements-utils-{{ checksum "Gemfile" }}
+          - symplectic-elements-utils-
+
+      - run:
+          name: Install dependencies
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
+
+      - save_cache:
+          key: symplectic-elements-utils-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+
+      # This is temporarily disabled for an initial update
+      # - run:
+      #     name: Lint the Ruby source code files using RuboCop
+      #     command: bundle exec rubocop
+
+  test:
+    working_directory: ~/symplectic-elements-utils
+
+    docker:
+      - image: circleci/ruby:2.7.4-node-browsers
+        environment:
+          RAILS_ENV: test
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - symplectic-elements-utils-{{ checksum "Gemfile" }}
+          - symplectic-elements-utils-
+
+      - run:
+          name: Install dependencies
+          command: bundle check --path=vendor/bundle || bundle install --path=vendor/bundle
+
+      - save_cache:
+          key: symplectic-elements-utils-{{ checksum "Gemfile" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Execute the test suites using RSpec
+          command: bundle exec rspec
+
+      - store_artifacts:
+          path: ~/symplectic-elements-utils/coverage
+          destination: coverage
+
+workflows:
+  version: 2
+  ci:
+    jobs:
+      - build
+      - lint:
+          requires:
+            - build
+      - test:
+          requires:
+            - build

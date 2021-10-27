@@ -11,6 +11,7 @@ AllCops:
 Metrics/AbcSize:
   Exclude:
     - 'lib/symplectic/elements/csv/transform_job.rb'
+    - 'cli.thor'
 
 Metrics/BlockLength:
   Exclude:
@@ -20,6 +21,7 @@ Metrics/BlockLength:
 Metrics/ClassLength:
   Exclude:
     - 'lib/symplectic/elements/xml/user.rb'
+    - 'cli.thor'
 
 Metrics/CyclomaticComplexity:
   Exclude:
