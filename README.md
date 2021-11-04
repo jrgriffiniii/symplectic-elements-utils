@@ -38,3 +38,9 @@ $ bundle exec thor elements:user_feeds:create \
 ```bash
 $ bundle exec rspec
 ```
+
+# Elements Administration
+
+# Upgrading Elements
+
+Please see the [extended documentation](./UPGRADING.md) for guidance on applying updates and upgrading the Symplectic Elements deployments.
