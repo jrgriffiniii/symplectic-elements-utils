@@ -17,5 +17,5 @@ DOCKER_HOSTNAME=sqlenterprise
   --env "SA_PASSWORD=$SA_PASSWORD" \
   --env "MSSQL_PID=$MSSQL_PID" \
   --detach \
-  --mount type=bind,source="$(pwd)"/exports,target=/exports \
+  --mount type=bind,source="$(pwd)"/imports,target=/imports \
   $DOCKER_IMAGE

@@ -1,2 +1,5 @@
 docker/exports/*xml
 docker/exports/*bcp
+docker/imports/*sql
+docker/imports/data/*bcp
+docker/imports/data/*xml
