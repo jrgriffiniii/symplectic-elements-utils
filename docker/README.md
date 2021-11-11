@@ -59,8 +59,8 @@ One then finds the following:
 #### Listing the database tables
 
 ```powershell
-> Add-Item \.select_table_names.sql
-> Add-Content \.select_table_names.sql '-- Select all table names for the elements database'
+> New-Item .\select_table_names.sql -ItemType File
+> Add-Content .\select_table_names.sql '-- Select all table names for the elements database'
 ```
 
 Then, please copy the contents of `sql/select_table_names.sql`:
@@ -96,7 +96,9 @@ From within the server environment, please execute the following:
       }
     }
   }
+> .\exportTables.ps1
 > sqlcmd -U $DbUser -P $DbPassword -S $DbServer -d elements -h -1 -i ..\select_table_names.sql | Export-Table
+
 ```
 
 In order to transfer these files to a local development environment, one must mount the CIFS file share hosted for one's user account using the path `\\files.princeton.edu\$NetID`. For the purposes of this example, I am mounting this to the drive `F:\`.
